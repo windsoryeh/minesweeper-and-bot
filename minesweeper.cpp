@@ -166,7 +166,7 @@ public:
 
 int main() {
     int rows, cols, mines;
-    cout << "Enter the number of rows, columns, and mines: ";
+    cout << "Hello! Enter the number of rows, columns, and mines: ";
     cin >> rows >> cols >> mines;
 
     Minesweeper game(rows, cols, mines);
