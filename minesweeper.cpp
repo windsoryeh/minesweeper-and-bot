@@ -22,6 +22,7 @@ private:
     vector<vector<bool> > revealed;   // Stores the revealed state of each cell
     vector<vector<bool> > flagged;    // Stores the flagged state of each cell
     int rows, cols, mines;
+    int firstRow = -200, firstCol = -200;
 
     void generateMines() {
         srand(time(0));
@@ -30,6 +31,7 @@ private:
             int r = rand() % rows;
             int c = rand() % cols;
             if (board[r][c] == '*') continue;  // Skip if a mine is already there
+            if ((r >= (firstRow - 1)) && (r <= (firstRow + 1)) && (c >= (firstCol - 1)) && (c <= (firstCol + 1))) continue; //Skip if in the 9 grids around first click
             board[r][c] = '*';
             placedMines++;
         }
@@ -132,6 +134,7 @@ public:
         int x, y;
         char action;
         bool gameOver = false;
+        bool firstMove = true;
         while (!gameOver) {
             printBoard();
             cout << "Enter row, column, and action (r to reveal, f to flag): ";
@@ -143,6 +146,14 @@ public:
             }
 
             if (action == 'r') {
+                if (firstMove) {
+                    firstRow = x;
+                    firstCol = y;
+                    fill(board.begin(), board.end(), vector<char>(cols, '0'));
+                    generateMines();
+                    calculateNumbers();
+                }
+                firstMove = false;
                 if (board[x][y] == '*') {
                     cout << "Game Over! You hit a mine.\n";
                     printBoard(true);  // Reveal all cells
@@ -165,9 +176,16 @@ public:
 };
 
 int main() {
-    int rows, cols, mines;
-    cout << "Hello! Enter the number of rows, columns, and mines: ";
-    cin >> rows >> cols >> mines;
+    int rows = 1, cols = 1, mines = 1;
+    while(1) {
+        cout << "Hello! Enter the number of rows, columns, and mines: ";
+        cin >> rows >> cols >> mines;
+        if(mines < 1) continue;
+        if(rows < 4) continue;
+        if(cols < 4) continue;
+        if(mines > (rows * cols - 9)) continue;
+        break;
+    }
 
     Minesweeper game(rows, cols, mines);
     game.play();
